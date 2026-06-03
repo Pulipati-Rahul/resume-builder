@@ -1,0 +1,294 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ResumeForge - Resume Builder</title>
+
+    <link rel="stylesheet" href="css/builder.css">
+
+</head>
+
+<body>
+
+    <header class="topbar">
+
+        <a href="index.html" class="brand-link" aria-label="Go to home page">
+            <h1>ResumeForge</h1>
+        </a>
+
+        <div class="top-actions">
+
+            <button class="template-btn" type="button">
+                Modern
+                
+
+            </button>
+
+            <button class="template-btn" type="button">
+                ATS
+            </button>
+
+            <button class="template-btn" type="button">
+                Classic
+            </button>
+
+            <button class="download-btn" type="button">
+                Download PDF
+            </button>
+
+        </div>
+
+    </header>
+
+    <div class="builder-container">
+
+        <!-- LEFT SIDEBAR -->
+
+        <div class="sidebar">
+
+            <h2>Resume Builder</h2>
+
+            <div class="section-box">
+
+                <h3>Personal Details</h3>
+
+                <input type="text"
+                       id="name"
+                       placeholder="Full Name"
+                       required>
+
+                <input type="email"
+                       id="email"
+                       placeholder="Email"
+                       required>
+
+                <input type="text"
+                       id="phone"
+                       placeholder="Phone">
+
+                <input type="text"
+                       id="linkedin"
+                       placeholder="LinkedIn">
+
+                <input type="text"
+                       id="github"
+                       placeholder="GitHub">
+
+                        <input type="file" id="photoInput" accept="image/*">
+
+                <div class="form-section">
+                 <h3>Professional Summary</h3>
+
+                    <textarea
+                      id="summaryInput"
+                        placeholder="Write a short professional summary..."
+                        rows="4"></textarea>
+                </div>
+
+            </div>
+
+            <div class="section-box">
+
+                <h3>Skills</h3>
+
+                <input type="text"
+                       id="skillInput"
+                       placeholder="Add Skill">
+
+                <button id="addSkill" type="button">
+                    Add Skill
+                </button>
+
+                <div id="skillsList"></div>
+
+            </div>
+
+            <div class="section-box">
+
+                <h3>Projects</h3>
+
+                <input type="text"
+                       id="projectInput"
+                       placeholder="Project Name">
+
+                <button id="addProject" type="button">
+                    Add Project
+                </button>
+
+                <div id="projectList"></div>
+
+            </div>
+
+                
+    
+<div class="section-box">
+
+    <h3>Education</h3>
+
+    <input type="text"
+           id="collegeInput"
+           placeholder="College Name">
+
+    <input type="text"
+           id="degreeInput"
+           placeholder="Degree">
+
+    <input type="text"
+           id="yearInput"
+           placeholder="Year">
+
+    <input type="text"
+           id="percentageInput"
+           placeholder="Percentage / CGPA">
+
+    <button id="addEducation" type="button">
+        Add Education
+    </button>
+
+    <div id="educationList"></div>
+
+</div>
+
+
+    <div class="section-box">
+
+        <h3>Experience</h3>
+
+        <input type="text"
+           id="experienceInput"
+           placeholder="Company / Role">
+
+        <button id="addExperience" type="button">
+            Add Experience
+        </button>
+
+        <div id="experienceList"></div>
+
+    </div>
+
+
+
+</div>
+
+        <!-- RIGHT PREVIEW -->
+
+        <div class="preview">
+        
+            <div class="score-box">
+
+                <h3>Resume Score</h3>
+
+                <h1 id="resumeScore">
+                     0%
+                </h1>
+
+            </div>
+
+            <div class="ats-checker">
+
+                <h3>ATS Checker</h3>
+
+                 <textarea
+                    id="jobDescription"
+                    placeholder="Paste Job Description Here"></textarea>
+
+                <button id="checkATS" type="button">
+                    Analyze Resume
+                 </button>
+
+                <div id="atsResult"></div>
+
+            </div>
+
+
+
+            <div class="resume-preview modern-template">
+
+                <img id="profilePreview"
+                 src=""
+                alt="Profile Photo">
+
+                <h1 id="previewName">
+                    Your Name
+                </h1>
+
+                <p id="previewEmail">
+                    Email
+                </p>
+
+                <p id="previewPhone">
+                    Phone
+                </p>
+
+                <p id="previewLinkedin">
+                    LinkedIn
+                </p>
+
+                <p id="previewGithub">
+                    GitHub
+                </p>
+
+                <h2>Professional Summary</h2>
+
+                <p id="previewSummary">
+                    Your professional summary will appear here.
+                </p>
+
+
+                <hr>
+
+                <h2>Skills</h2>
+
+                <div id="previewSkills"></div>
+
+                <h2>Projects</h2>
+
+                <div id="previewProjects"></div>
+                <h2>Education</h2>
+
+                <div id="previewEducation"></div>
+
+                <h2>Experience</h2>
+
+                <div id="previewExperience"></div>
+
+            </div>
+
+        </div>
+
+    
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Confirm Delete</h3>
+            <p id="confirmMessage">Are you sure you want to delete this item?</p>
+            <div class="modal-actions">
+                <button id="confirmCancel" class="btn-cancel" type="button">Cancel</button>
+                <button id="confirmDelete" class="btn-delete" type="button">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner hidden">
+        <div class="spinner"></div>
+        <p>Generating PDF...</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="js/builder.js"></script>
+    <script src="js/main.js"></script>
+
+    <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top">&#9650;</button>
+</body>
+
+
+</html>
