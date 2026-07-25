@@ -1,385 +1,316 @@
-﻿
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>ResumeForge</title>
+    <meta name="description" content="ResumeForge is a free resume builder offering modern, ATS-friendly templates with live preview and PDF download. Create your professional resume in minutes.">
+    <link rel="canonical" href="https://resumeforge.com/">
+    <title>ResumeForge - Free Professional ATS Resume Builder</title>
 
     <link rel="stylesheet" href="css/style.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Structured Data (JSON-LD) for Search Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ResumeForge",
+      "url": "https://resumeforge.com",
+      "logo": "https://resumeforge.com/logo.png",
+      "description": "Build recruiter-ready ATS-friendly resumes in minutes with 15 unique, premium templates, real-time live preview, score analysis, and instant PDF downloads.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires HTML5 compatible browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0.00",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
 </head>
 
 <body>
 
     <!-- NAVBAR -->
-
     <header>
-
         <nav class="navbar">
-
             <div class="logo">
                 ResumeForge
             </div>
 
-            <ul class="nav-links">
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
 
+            <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#templates">Templates</a></li>
                 <li><a href="#stats">Stats</a></li>
-
                 <li>
                     <a href="builder.html" class="nav-btn">
                         Start Building
                     </a>
                 </li>
-
             </ul>
-
         </nav>
-
     </header>
 
     <!-- HERO -->
-
     <section class="hero">
-
         <div class="hero-content">
-
             <h1>
                 Build Professional ATS-Friendly Resumes
             </h1>
-
             <p>
-
                 Create modern, recruiter-ready resumes
                 in minutes with beautiful templates,
                 live preview and PDF download.
-
             </p>
-
             <div class="hero-buttons">
-
                 <a href="builder.html" class="btn">
                     Start Building
                 </a>
-
                 <a href="#templates" class="btn-outline">
                     View Templates
                 </a>
-
             </div>
-
         </div>
-
     </section>
 
     <!-- FEATURES -->
-
     <section id="features" class="section">
-
         <h2>
             Why ResumeForge?
         </h2>
-
         <div class="cards">
-
             <div class="card">
                 &#129302; ATS Friendly Templates
             </div>
-
             <div class="card">
                 &#128065; Live Resume Preview
             </div>
-
             <div class="card">
-                &#127912; 40+ Unique Templates
+                &#127912; 15 Unique Layouts
             </div>
-
             <div class="card">
                 &#128196; PDF Download
             </div>
-
             <div class="card">
                 &#128247; Profile Photo Upload
             </div>
-
             <div class="card">
                 &#9999; Easy Customization
             </div>
-
             <div class="card">
                 &#128190; Auto-Save to Browser
             </div>
-
             <div class="card">
                 &#128276; Toast Notifications
             </div>
-
             <div class="card">
                 &#10003; Form Validation
             </div>
-
             <div class="card">
                 &#128465; Delete Confirmation Modal
             </div>
-
             <div class="card">
                 &#128202; Proportional Resume Score
             </div>
-
             <div class="card">
                 &#128395; Real-time Validation
             </div>
-
             <div class="card">
                 &#10024; Smooth Animations
             </div>
-
             <div class="card">
                 &#128241; Fully Responsive
             </div>
-
             <div class="card">
                 &#9000; Keyboard Navigation
             </div>
-
         </div>
-
     </section>
 
     <!-- TEMPLATES -->
-
     <section id="templates" class="section">
-
         <h2>
             Templates
         </h2>
-
         <div class="cards">
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=modern" data-template="modern" data-tooltip="Modern, bold header and clean sections">Modern Professional</a>
+            <div class="card template-card">
+                <div class="template-mini-preview modern-mini"></div>
+                <h3 class="template-name">Modern Professional</h3>
+                <p class="template-desc">Two-column sidebar layout</p>
+                <a class="template-link" href="builder.html?template=modern" data-template="modern" data-tooltip="Two-column sidebar layout">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=ats" data-template="ats" data-tooltip="ATS-friendly minimal layout">Minimal ATS</a>
+            <div class="card template-card">
+                <div class="template-mini-preview ats-mini"></div>
+                <h3 class="template-name">Minimal ATS</h3>
+                <p class="template-desc">Plain text, ATS-optimized</p>
+                <a class="template-link" href="builder.html?template=ats" data-template="ats" data-tooltip="Plain text, ATS-optimized">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=student" data-template="student" data-tooltip="Student-focused layout">Student Resume</a>
+            <div class="card template-card">
+                <div class="template-mini-preview classic-mini"></div>
+                <h3 class="template-name">Classic Corporate</h3>
+                <p class="template-desc">Left accent, serif typography</p>
+                <a class="template-link" href="builder.html?template=classic" data-template="classic" data-tooltip="Left accent, serif typography">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=classic" data-template="classic" data-tooltip="Classic corporate style">Classic Corporate</a>
+            <div class="card template-card">
+                <div class="template-mini-preview student-mini"></div>
+                <h3 class="template-name">Student Fresh</h3>
+                <p class="template-desc">Top banner with centered header</p>
+                <a class="template-link" href="builder.html?template=student" data-template="student" data-tooltip="Top banner with centered header">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=minimal" data-template="minimal" data-tooltip="Clean, minimal sections">Minimal</a>
+            <div class="card template-card">
+                <div class="template-mini-preview creative-mini"></div>
+                <h3 class="template-name">Creative Portfolio</h3>
+                <p class="template-desc">Colorful header banner, card sections</p>
+                <a class="template-link" href="builder.html?template=creative" data-template="creative" data-tooltip="Colorful header banner, card sections">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=sleek" data-template="sleek" data-tooltip="Sleek and modern accent">Sleek</a>
+            <div class="card template-card">
+                <div class="template-mini-preview executive-mini"></div>
+                <h3 class="template-name">Executive Suite</h3>
+                <p class="template-desc">Formal double-line borders, serif</p>
+                <a class="template-link" href="builder.html?template=executive" data-template="executive" data-tooltip="Formal double-line borders, serif">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=creative" data-template="creative" data-tooltip="Creative layout with accent">Creative</a>
+            <div class="card template-card">
+                <div class="template-mini-preview tech-mini"></div>
+                <h3 class="template-name">Tech Developer</h3>
+                <p class="template-desc">Monospace, code-style decorations</p>
+                <a class="template-link" href="builder.html?template=tech" data-template="tech" data-tooltip="Monospace, code-style decorations">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=professional" data-template="professional" data-tooltip="Professional business style">Professional</a>
+            <div class="card template-card">
+                <div class="template-mini-preview elegant-mini"></div>
+                <h3 class="template-name">Elegant Serif</h3>
+                <p class="template-desc">Italic serif, decorative dividers</p>
+                <a class="template-link" href="builder.html?template=elegant" data-template="elegant" data-tooltip="Italic serif, decorative dividers">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=simple" data-template="simple" data-tooltip="Simple single-column layout">Simple</a>
+            <div class="card template-card">
+                <div class="template-mini-preview bold-mini"></div>
+                <h3 class="template-name">Bold Impact</h3>
+                <p class="template-desc">Oversized name, high contrast</p>
+                <a class="template-link" href="builder.html?template=bold" data-template="bold" data-tooltip="Oversized name, high contrast">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=elegant" data-template="elegant" data-tooltip="Elegant typography and spacing">Elegant</a>
+            <div class="card template-card">
+                <div class="template-mini-preview timeline-mini"></div>
+                <h3 class="template-name">Sleek Timeline</h3>
+                <p class="template-desc">Timeline dots and connectors</p>
+                <a class="template-link" href="builder.html?template=timeline" data-template="timeline" data-tooltip="Timeline dots and connectors">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=vibrant" data-template="vibrant" data-tooltip="Vibrant and energetic colors">Vibrant</a>
+            <div class="card template-card">
+                <div class="template-mini-preview nordic-mini"></div>
+                <h3 class="template-name">Nordic Minimal</h3>
+                <p class="template-desc">Ultra-clean, lots of whitespace</p>
+                <a class="template-link" href="builder.html?template=nordic" data-template="nordic" data-tooltip="Ultra-clean, lots of whitespace">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=minimalist-clean" data-template="minimalist-clean" data-tooltip="Ultra clean and minimal">Minimalist Clean</a>
+            <div class="card template-card">
+                <div class="template-mini-preview infographic-mini"></div>
+                <h3 class="template-name">Infographic</h3>
+                <p class="template-desc">Skill bars and progress indicators</p>
+                <a class="template-link" href="builder.html?template=infographic" data-template="infographic" data-tooltip="Skill bars and progress indicators">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=tech-savvy" data-template="tech-savvy" data-tooltip="Tech industry style">Tech Savvy</a>
+            <div class="card template-card">
+                <div class="template-mini-preview split-mini"></div>
+                <h3 class="template-name">Two-Column Split</h3>
+                <p class="template-desc">50/50 left-right split layout</p>
+                <a class="template-link" href="builder.html?template=split" data-template="split" data-tooltip="50/50 left-right split layout">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=executive" data-template="executive" data-tooltip="Executive level design">Executive</a>
+            <div class="card template-card">
+                <div class="template-mini-preview compact-mini"></div>
+                <h3 class="template-name">Compact One-Page</h3>
+                <p class="template-desc">Dense, maximizes content space</p>
+                <a class="template-link" href="builder.html?template=compact" data-template="compact" data-tooltip="Dense, maximizes content space">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=artistic" data-template="artistic" data-tooltip="Creative and artistic">Artistic</a>
+            <div class="card template-card">
+                <div class="template-mini-preview gradient-mini"></div>
+                <h3 class="template-name">Gradient Header</h3>
+                <p class="template-desc">Gradient header with overlay text</p>
+                <a class="template-link" href="builder.html?template=gradient" data-template="gradient" data-tooltip="Gradient header with overlay text">Use Template &rarr;</a>
             </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=corporate" data-template="corporate" data-tooltip="Corporate blue style">Corporate</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=retro" data-template="retro" data-tooltip="Vintage and retro">Retro</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=futuristic" data-template="futuristic" data-tooltip="Modern and futuristic">Futuristic</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=nature-inspired" data-template="nature-inspired" data-tooltip="Green and natural">Nature Inspired</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=luxury" data-template="luxury" data-tooltip="Premium and luxury">Luxury</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=startup" data-template="startup" data-tooltip="Startup tech style">Startup</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=academic" data-template="academic" data-tooltip="Academic institution">Academic</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=bold" data-template="bold" data-tooltip="Bold and striking">Bold</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=soft" data-template="soft" data-tooltip="Soft and gentle">Soft</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=geometric" data-template="geometric" data-tooltip="Geometric design">Geometric</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=vintage" data-template="vintage" data-tooltip="Vintage aesthetic">Vintage</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=modern-dark" data-template="modern-dark" data-tooltip="Dark modern theme">Modern Dark</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=neon" data-template="neon" data-tooltip="Neon bright colors">Neon</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=pastel" data-template="pastel" data-tooltip="Soft pastel colors">Pastel</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=industrial" data-template="industrial" data-tooltip="Industrial gray">Industrial</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=zen" data-template="zen" data-tooltip="Calm and minimalist">Zen</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=playful" data-template="playful" data-tooltip="Fun and playful">Playful</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=formal" data-template="formal" data-tooltip="Formal black and white">Formal</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=hybrid" data-template="hybrid" data-tooltip="Hybrid style">Hybrid</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=gradient" data-template="gradient" data-tooltip="Gradient background">Gradient</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=metallic" data-template="metallic" data-tooltip="Metallic accents">Metallic</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=earthy" data-template="earthy" data-tooltip="Earth tone colors">Earthy</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=royal" data-template="royal" data-tooltip="Royal purple">Royal</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=sunset" data-template="sunset" data-tooltip="Warm sunset tones">Sunset</a>
-            </div>
-
-            <div class="card">
-                <a class="template-link" href="builder.html?template=ocean" data-template="ocean" data-tooltip="Ocean blue theme">Ocean</a>
-            </div>
-
         </div>
-
     </section>
 
     <!-- STATS -->
-
     <section id="stats" class="section">
-
         <h2>
             ResumeForge At A Glance
         </h2>
-
         <div class="cards">
-
             <div class="card">
-                <h3>40+</h3>
-                <p>Templates</p>
+                <h3>15</h3>
+                <p>Unique Layouts</p>
             </div>
-
             <div class="card">
                 <h3>100%</h3>
                 <p>Free</p>
             </div>
-
             <div class="card">
                 <h3>ATS</h3>
                 <p>Optimized</p>
             </div>
-
             <div class="card">
                 <h3>PDF</h3>
                 <p>Download</p>
             </div>
-
         </div>
-
     </section>
 
     <!-- FOOTER -->
-
-    <footer>
-
-        <h2>ResumeForge</h2>
-
-        <p>
-            Build Better Careers.
-        </p>
-
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-brand-col">
+                <div class="footer-logo">ResumeForge</div>
+                <p class="footer-pitch">Build professional, recruiter-ready, ATS-friendly resumes in minutes. 100% Free, secure, and client-side only.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Twitter">🐦</a>
+                    <a href="#" aria-label="LinkedIn">🔗</a>
+                    <a href="#" aria-label="GitHub">💻</a>
+                </div>
+            </div>
+            <div class="footer-links-col">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="builder.html">Online Builder</a></li>
+                    <li><a href="#templates">15 Layouts</a></li>
+                    <li><a href="#features">Key Features</a></li>
+                </ul>
+            </div>
+            <div class="footer-links-col">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="https://fonts.google.com/" target="_blank">Google Fonts</a></li>
+                    <li><a href="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" target="_blank">html2pdf.js</a></li>
+                </ul>
+            </div>
+            <div class="footer-links-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ResumeForge. Made with care for job seekers globally.</p>
+        </div>
     </footer>
 
     <script src="js/main.js"></script>
-
     <button id="backToTop" class="back-to-top" aria-label="Back to top">&#9650;</button>
 
+    <script>
+        document.getElementById('hamburger')?.addEventListener('click', function() {
+            this.classList.toggle('active');
+            document.querySelector('.nav-links')?.classList.toggle('open');
+        });
+    </script>
+
 </body>
-
 </html>
-
-

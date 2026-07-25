@@ -1,712 +1,645 @@
 (function () {
-    const STORAGE_KEY = "resumeData_v2";
-    const LEGACY_STORAGE_KEY = "resumeData_v1";
-
+    const STORAGE_KEY = "resumeData_v3";
+    
     const $ = (id) => document.getElementById(id);
-
-    const refs = {
-        name: $("name"),
-        email: $("email"),
-        phone: $("phone"),
-        linkedin: $("linkedin"),
-        github: $("github"),
-        photoInput: $("photoInput"),
-        summary: $("summaryInput"),
-        skillInput: $("skillInput"),
-        addSkill: $("addSkill"),
-        skillsList: $("skillsList"),
-        projectInput: $("projectInput"),
-        addProject: $("addProject"),
-        projectList: $("projectList"),
-        college: $("collegeInput"),
-        degree: $("degreeInput"),
-        year: $("yearInput"),
-        percentage: $("percentageInput"),
-        addEducation: $("addEducation"),
-        educationList: $("educationList"),
-        experienceInput: $("experienceInput"),
-        addExperience: $("addExperience"),
-        experienceList: $("experienceList"),
-        previewName: $("previewName"),
-        previewEmail: $("previewEmail"),
-        previewPhone: $("previewPhone"),
-        previewLinkedin: $("previewLinkedin"),
-        previewGithub: $("previewGithub"),
-        previewSummary: $("previewSummary"),
-        previewSkills: $("previewSkills"),
-        previewProjects: $("previewProjects"),
-        previewEducation: $("previewEducation"),
-        previewExperience: $("previewExperience"),
-        profilePreview: $("profilePreview"),
-        resumeScore: $("resumeScore"),
-        jobDescription: $("jobDescription"),
-        checkATS: $("checkATS"),
-        atsResult: $("atsResult"),
-        confirmModal: $("confirmModal"),
-        confirmMessage: $("confirmMessage"),
-        confirmCancel: $("confirmCancel"),
-        confirmDelete: $("confirmDelete"),
-        loadingSpinner: $("loadingSpinner"),
-        downloadBtn: document.querySelector(".download-btn"),
-        resumePreview: document.querySelector(".resume-preview"),
-        templateButtons: document.querySelectorAll(".template-btn")
-    };
-
+    
     const state = {
-        name: "",
-        email: "",
-        phone: "",
-        linkedin: "",
-        github: "",
-        summary: "",
-        photo: "",
-        template: "modern",
+        name: '', email: '', phone: '', linkedin: '', github: '', website: '', location: '',
+        summary: '', photo: '', template: 'modern',
         skills: [],
-        projects: [],
-        education: [],
-        experience: []
+        experience: [],     // [{title, company, duration, location, description}]
+        education: [],      // [{college, degree, year, percentage}]
+        projects: [],       // [{name, description, tech}]
+        languages: [],      // [{language, level}]
+        certifications: [], // [{name, issuer, year}]
+        hobbies: []
     };
 
     let saveTimer = null;
-    let pendingDelete = null;
+    let pendingConfirmAction = null;
 
-    function normalizeText(value) {
-        return String(value || "").trim();
-    }
+    // UI References
+    const refs = {
+        // Inputs
+        name: $('name'), email: $('email'), phone: $('phone'),
+        linkedin: $('linkedin'), github: $('github'), website: $('website'), location: $('location'),
+        summary: $('summaryInput'), summaryCount: $('summaryCount'),
+        photoInput: $('photoInput'), photoUploadArea: $('photoUploadArea'), 
+        photoPreviewThumb: $('photoPreviewThumb'), photoPreviewWrapper: $('photoPreviewWrapper'),
+        uploadPlaceholder: $('uploadPlaceholder'), removePhotoBtn: $('removePhotoBtn'),
+        
+        skillInput: $('skillInput'), addSkill: $('addSkill'), skillsList: $('skillsList'),
+        
+        expTitle: $('expTitle'), expCompany: $('expCompany'), expDuration: $('expDuration'),
+        expLocation: $('expLocation'), expDescription: $('expDescription'), addExperience: $('addExperience'),
+        experienceList: $('experienceList'),
+        
+        collegeInput: $('collegeInput'), degreeInput: $('degreeInput'), yearInput: $('yearInput'),
+        percentageInput: $('percentageInput'), addEducation: $('addEducation'), educationList: $('educationList'),
+        
+        projectInput: $('projectInput'), projectDesc: $('projectDesc'), projectTech: $('projectTech'),
+        addProject: $('addProject'), projectList: $('projectList'),
+        
+        languageInput: $('languageInput'), languageLevel: $('languageLevel'),
+        addLanguage: $('addLanguage'), languageList: $('languageList'),
+        
+        certInput: $('certInput'), certIssuer: $('certIssuer'), certYear: $('certYear'),
+        addCert: $('addCert'), certList: $('certList'),
+        
+        hobbyInput: $('hobbyInput'), addHobby: $('addHobby'), hobbyList: $('hobbyList'),
+        
+        // Preview
+        resumePreview: $('resumePreview'),
+        previewName: $('previewName'), previewEmail: $('previewEmail'), previewPhone: $('previewPhone'),
+        previewLinkedin: $('previewLinkedin'), previewGithub: $('previewGithub'),
+        previewWebsite: $('previewWebsite'), previewLocation: $('previewLocation'), contactInfo: $('contactInfo'),
+        previewSummary: $('previewSummary'), profilePreview: $('profilePreview'),
+        previewSkills: $('previewSkills'), previewExperience: $('previewExperience'),
+        previewEducation: $('previewEducation'), previewProjects: $('previewProjects'),
+        previewLanguages: $('previewLanguages'), previewCertifications: $('previewCertifications'),
+        previewHobbies: $('previewHobbies'),
+        
+        // Sections
+        summarySection: $('summarySection'), skillsSection: $('skillsSection'),
+        experienceSection: $('experienceSection'), educationSection: $('educationSection'),
+        projectsSection: $('projectsSection'), languagesSection: $('languagesSection'),
+        certificationsSection: $('certificationsSection'), hobbiesSection: $('hobbiesSection'),
 
-    function escapeStorageRead(key) {
-        try {
-            return JSON.parse(localStorage.getItem(key) || "null");
-        } catch (error) {
-            console.warn("Unable to parse saved resume data:", error);
-            return null;
-        }
+        // Others
+        resumeScore: $('resumeScore'), scoreRingFill: $('scoreRingFill'),
+        jobDescription: $('jobDescription'), checkATS: $('checkATS'), atsResult: $('atsResult'),
+        toastContainer: $('toastContainer'),
+        confirmModal: $('confirmModal'), confirmMessage: $('confirmMessage'),
+        confirmCancel: $('confirmCancel'), confirmDelete: $('confirmDelete'),
+        loadingSpinner: $('loadingSpinner'),
+        downloadBtn: $('downloadBtn'), mobileDownloadBtn: $('mobileDownloadBtn'),
+        templateBtns: document.querySelectorAll('.template-btn'),
+        importBtn: $('importBtn'), exportBtn: $('exportBtn'), resetBtn: $('resetBtn'),
+        importFileInput: $('importFileInput'),
+        
+        // Mobile & layout
+        mobileMenuToggle: $('mobileMenuToggle'), topActions: $('topActions'),
+        tabBtns: document.querySelectorAll('.tab-btn'),
+        sidebarPanel: $('sidebarPanel'), previewPanel: $('previewPanel'),
+        sectionHeaders: document.querySelectorAll('.section-header')
+    };
+
+    // --- UTILS ---
+    function showToast(message, type = 'info', duration = 3000) {
+        if (!refs.toastContainer) return;
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        refs.toastContainer.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
     }
 
     function loadState() {
-        const saved = escapeStorageRead(STORAGE_KEY) || escapeStorageRead(LEGACY_STORAGE_KEY) || {};
-
-        state.name = saved.name || localStorage.getItem("resumeName") || "";
-        state.email = saved.email || localStorage.getItem("resumeEmail") || "";
-        state.phone = saved.phone || localStorage.getItem("resumePhone") || "";
-        state.linkedin = saved.linkedin || localStorage.getItem("resumeLinkedin") || "";
-        state.github = saved.github || localStorage.getItem("resumeGithub") || "";
-        state.summary = saved.summary || "";
-        state.photo = saved.photo || "";
-        state.template = saved.template || "modern";
-        state.skills = Array.isArray(saved.skills) ? saved.skills.filter(Boolean) : [];
-        state.projects = Array.isArray(saved.projects) ? saved.projects.filter(Boolean) : [];
-        state.education = Array.isArray(saved.education) ? saved.education.filter(Boolean) : [];
-        state.experience = Array.isArray(saved.experience) ? saved.experience.filter(Boolean) : [];
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                Object.assign(state, parsed);
+            }
+        } catch (e) {
+            console.error('Failed to load state', e);
+        }
     }
 
-    function saveState(immediate) {
+    function saveState() {
         clearTimeout(saveTimer);
-        const write = () => {
+        saveTimer = setTimeout(() => {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            showSaveIndicator();
-        };
-
-        if (immediate) {
-            write();
-        } else {
-            saveTimer = setTimeout(write, 350);
-        }
-    }
-
-    function showSaveIndicator() {
-        let indicator = document.querySelector(".save-indicator");
-        if (!indicator) {
-            indicator = document.createElement("div");
-            indicator.className = "save-indicator";
-            indicator.textContent = "Saved";
-            document.body.appendChild(indicator);
-        }
-
-        indicator.classList.add("visible");
-        clearTimeout(indicator.hideTimer);
-        indicator.hideTimer = setTimeout(() => indicator.classList.remove("visible"), 1200);
-    }
-
-    function showToast(message, type = "info", duration = 2600) {
-        const container = $("toastContainer");
-        if (!container) return;
-
-        const toast = document.createElement("div");
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        container.appendChild(toast);
-
-        setTimeout(() => {
-            toast.classList.add("removing");
-            setTimeout(() => toast.remove(), 350);
-        }, duration);
+        }, 500);
     }
 
     function showFieldError(field, message) {
         if (!field) return;
-
-        field.classList.add("error");
+        field.classList.add('error');
         let error = field.nextElementSibling;
-        if (!error || !error.classList.contains("error-message")) {
-            error = document.createElement("div");
-            error.className = "error-message";
+        if (!error || !error.classList.contains('error-message')) {
+            error = document.createElement('div');
+            error.className = 'error-message';
             field.parentNode.insertBefore(error, field.nextSibling);
         }
-
         error.textContent = message;
-        error.classList.add("show");
+        error.classList.add('show');
     }
 
     function clearFieldError(field) {
         if (!field) return;
-
-        field.classList.remove("error");
+        field.classList.remove('error');
         const error = field.nextElementSibling;
-        if (error && error.classList.contains("error-message")) {
-            error.textContent = "";
-            error.classList.remove("show");
+        if (error && error.classList.contains('error-message')) {
+            error.classList.remove('show');
         }
     }
 
-    function validateEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    function validatePhone(phone) {
-        const digits = phone.replace(/\D/g, "");
-        return digits.length >= 7 && digits.length <= 15;
-    }
-
+    function validateEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    function validatePhone(phone) { const d = phone.replace(/\D/g, ""); return d.length >= 7 && d.length <= 15; }
+    
     function validateField(field, rules) {
-        const value = normalizeText(field.value);
-
-        if (rules.required && !value) {
-            showFieldError(field, rules.requiredMessage || "This field is required");
-            return false;
-        }
-
-        if (value && rules.email && !validateEmail(value)) {
-            showFieldError(field, "Enter a valid email address");
-            return false;
-        }
-
-        if (value && rules.phone && !validatePhone(value)) {
-            showFieldError(field, "Enter a valid phone number");
-            return false;
-        }
-
+        const val = (field.value || '').trim();
+        if (rules.required && !val) { showFieldError(field, "This field is required"); return false; }
+        if (val && rules.email && !validateEmail(val)) { showFieldError(field, "Invalid email"); return false; }
+        if (val && rules.phone && !validatePhone(val)) { showFieldError(field, "Invalid phone"); return false; }
         clearFieldError(field);
         return true;
     }
 
     function validateForm(showMessage) {
-        const checks = [
-            validateField(refs.name, { required: true, requiredMessage: "Name is required" }),
-            validateField(refs.email, { required: true, email: true, requiredMessage: "Email is required" }),
-            validateField(refs.phone, { phone: true })
-        ];
-
-        const isValid = checks.every(Boolean);
-        if (!isValid && showMessage) {
-            showToast("Please fix the highlighted fields", "error");
-        }
-
+        const v1 = validateField(refs.name, { required: true });
+        const v2 = validateField(refs.email, { required: true, email: true });
+        const v3 = validateField(refs.phone, { phone: true });
+        const isValid = v1 && v2 && v3;
+        if (!isValid && showMessage) showToast("Please fix the highlighted fields", "error");
         return isValid;
     }
 
-    function syncInputsFromState() {
-        refs.name.value = state.name;
-        refs.email.value = state.email;
-        refs.phone.value = state.phone;
-        refs.linkedin.value = state.linkedin;
-        refs.github.value = state.github;
-        refs.summary.value = state.summary;
-
-        if (state.photo) {
-            refs.profilePreview.src = state.photo;
-            refs.profilePreview.style.display = state.template === "ats" ? "none" : "block";
-        } else {
-            refs.profilePreview.removeAttribute("src");
-            refs.profilePreview.style.display = "none";
-        }
-    }
-
-    function updateStateFromPersonalInputs() {
-        state.name = refs.name.value.trim();
-        state.email = refs.email.value.trim();
-        state.phone = refs.phone.value.trim();
-        state.linkedin = refs.linkedin.value.trim();
-        state.github = refs.github.value.trim();
-        state.summary = refs.summary.value.trim();
-    }
-
-    function renderText(target, value, fallback) {
-        target.textContent = value || fallback;
-    }
-
-    function createDeleteButton(label, onDelete) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "delete-btn inline-delete";
-        button.textContent = "x";
-        button.setAttribute("aria-label", label);
-        button.addEventListener("click", (event) => {
-            event.stopPropagation();
-            showConfirmModal(label + "?", onDelete);
-        });
-        return button;
-    }
-
-    function renderSkills() {
-        refs.skillsList.innerHTML = "";
-        refs.previewSkills.innerHTML = "";
-
-        state.skills.forEach((skill, index) => {
-            const chip = document.createElement("span");
-            chip.className = "tag";
-            chip.textContent = skill;
-            chip.appendChild(createDeleteButton(`Delete skill ${skill}`, () => {
-                state.skills.splice(index, 1);
-                renderAll();
-                saveState(true);
-                showToast("Skill deleted", "info");
-            }));
-            refs.skillsList.appendChild(chip);
-
-            const previewChip = document.createElement("span");
-            previewChip.className = "skill-pill";
-            previewChip.textContent = skill;
-            refs.previewSkills.appendChild(previewChip);
-        });
-    }
-
-    function renderProjects() {
-        refs.projectList.innerHTML = "";
-        refs.previewProjects.innerHTML = "";
-
-        state.projects.forEach((project, index) => {
-            const chip = document.createElement("span");
-            chip.className = "tag";
-            chip.textContent = project;
-            chip.appendChild(createDeleteButton(`Delete project ${project}`, () => {
-                state.projects.splice(index, 1);
-                renderAll();
-                saveState(true);
-                showToast("Project deleted", "info");
-            }));
-            refs.projectList.appendChild(chip);
-
-            const card = document.createElement("div");
-            card.className = "project-item";
-            card.textContent = project;
-            refs.previewProjects.appendChild(card);
-        });
-    }
-
-    function renderEducation() {
-        refs.educationList.innerHTML = "";
-        refs.previewEducation.innerHTML = "";
-
-        state.education.forEach((education, index) => {
-            const label = [education.degree, education.college].filter(Boolean).join(" - ");
-            const chip = document.createElement("span");
-            chip.className = "tag";
-            chip.textContent = label || "Education";
-            chip.appendChild(createDeleteButton(`Delete education ${label || ""}`.trim(), () => {
-                state.education.splice(index, 1);
-                renderAll();
-                saveState(true);
-                showToast("Education deleted", "info");
-            }));
-            refs.educationList.appendChild(chip);
-
-            const card = document.createElement("div");
-            card.className = "project-item";
-
-            const title = document.createElement("strong");
-            title.textContent = education.college;
-            card.appendChild(title);
-
-            [education.degree, education.year, education.percentage].filter(Boolean).forEach((line) => {
-                card.appendChild(document.createElement("br"));
-                card.appendChild(document.createTextNode(line));
-            });
-
-            refs.previewEducation.appendChild(card);
-        });
-    }
-
-    function renderExperience() {
-        refs.experienceList.innerHTML = "";
-        refs.previewExperience.innerHTML = "";
-
-        state.experience.forEach((experience, index) => {
-            const chip = document.createElement("span");
-            chip.className = "tag";
-            chip.textContent = experience;
-            chip.appendChild(createDeleteButton(`Delete experience ${experience}`, () => {
-                state.experience.splice(index, 1);
-                renderAll();
-                saveState(true);
-                showToast("Experience deleted", "info");
-            }));
-            refs.experienceList.appendChild(chip);
-
-            const card = document.createElement("div");
-            card.className = "project-item";
-            const strong = document.createElement("strong");
-            strong.textContent = experience;
-            card.appendChild(strong);
-            refs.previewExperience.appendChild(card);
-        });
-    }
-
-    function calculateScore() {
-        const checks = [
-            state.name,
-            validateEmail(state.email) ? state.email : "",
-            validatePhone(state.phone) ? state.phone : "",
-            state.linkedin,
-            state.github,
-            state.summary,
-            state.skills.length,
-            state.projects.length,
-            state.education.length,
-            state.experience.length
-        ];
-
-        return Math.round((checks.filter(Boolean).length / checks.length) * 100);
-    }
-
-    function updateScore() {
-        refs.resumeScore.textContent = calculateScore() + "%";
-    }
-
-    function renderPreview() {
-        renderText(refs.previewName, state.name, "Your Name");
-        renderText(refs.previewEmail, state.email, "Email");
-        renderText(refs.previewPhone, state.phone, "Phone");
-        renderText(refs.previewLinkedin, state.linkedin, "LinkedIn");
-        renderText(refs.previewGithub, state.github, "GitHub");
-        renderText(refs.previewSummary, state.summary, "Your professional summary will appear here.");
-
-        if (state.photo) {
-            refs.profilePreview.src = state.photo;
-            refs.profilePreview.style.display = state.template === "ats" ? "none" : "block";
-        } else {
-            refs.profilePreview.removeAttribute("src");
-            refs.profilePreview.style.display = "none";
-        }
-    }
-
-    function renderAll() {
-        renderPreview();
-        renderSkills();
-        renderProjects();
-        renderEducation();
-        renderExperience();
-        applyTemplate(state.template);
-        updateScore();
-    }
-
-    function showConfirmModal(message, callback) {
-        pendingDelete = callback;
+    function showConfirmModal(message, onConfirm) {
+        pendingConfirmAction = onConfirm;
         refs.confirmMessage.textContent = message;
-        refs.confirmModal.classList.remove("hidden");
+        refs.confirmModal.classList.remove('hidden');
     }
 
     function hideConfirmModal() {
-        pendingDelete = null;
-        refs.confirmModal.classList.add("hidden");
+        pendingConfirmAction = null;
+        refs.confirmModal.classList.add('hidden');
     }
 
-    function addSkill() {
-        const skill = normalizeText(refs.skillInput.value);
-        if (!skill) {
-            showFieldError(refs.skillInput, "Enter a skill");
-            showToast("Please enter a skill", "warning");
-            return;
+    // --- SYNC & RENDER ---
+    function syncInputsFromState() {
+        refs.name.value = state.name; refs.email.value = state.email; refs.phone.value = state.phone;
+        refs.linkedin.value = state.linkedin; refs.github.value = state.github;
+        refs.website.value = state.website; refs.location.value = state.location;
+        refs.summary.value = state.summary; refs.summaryCount.textContent = state.summary.length;
+        
+        if (state.photo) {
+            refs.photoPreviewThumb.src = state.photo;
+            refs.photoPreviewWrapper.style.display = 'block';
+            refs.uploadPlaceholder.style.display = 'none';
+        } else {
+            refs.photoPreviewThumb.removeAttribute('src');
+            refs.photoPreviewWrapper.style.display = 'none';
+            refs.uploadPlaceholder.style.display = 'block';
         }
-
-        if (state.skills.some((item) => item.toLowerCase() === skill.toLowerCase())) {
-            showFieldError(refs.skillInput, "This skill is already added");
-            return;
-        }
-
-        clearFieldError(refs.skillInput);
-        state.skills.push(skill);
-        refs.skillInput.value = "";
-        renderAll();
-        saveState(true);
-        showToast("Skill added", "success");
     }
 
-    function addProject() {
-        const project = normalizeText(refs.projectInput.value);
-        if (!project) {
-            showFieldError(refs.projectInput, "Enter a project");
-            showToast("Please enter a project", "warning");
-            return;
-        }
-
-        clearFieldError(refs.projectInput);
-        state.projects.push(project);
-        refs.projectInput.value = "";
-        renderAll();
-        saveState(true);
-        showToast("Project added", "success");
+    function updateStateFromInputs() {
+        state.name = refs.name.value.trim(); state.email = refs.email.value.trim();
+        state.phone = refs.phone.value.trim(); state.linkedin = refs.linkedin.value.trim();
+        state.github = refs.github.value.trim(); state.website = refs.website.value.trim();
+        state.location = refs.location.value.trim(); state.summary = refs.summary.value.trim();
+        refs.summaryCount.textContent = state.summary.length;
+        saveState();
+        renderPreview();
+        updateScore();
     }
 
-    function addEducation() {
-        const education = {
-            college: normalizeText(refs.college.value),
-            degree: normalizeText(refs.degree.value),
-            year: normalizeText(refs.year.value),
-            percentage: normalizeText(refs.percentage.value)
-        };
+    function renderPreview() {
+        refs.previewName.textContent = state.name || "Your Name";
+        
+        // Contact Info
+        const contacts = [];
+        if (state.email) contacts.push(`<span class="contact-item">${state.email}</span>`);
+        if (state.phone) contacts.push(`<span class="contact-item">${state.phone}</span>`);
+        if (state.linkedin) contacts.push(`<span class="contact-item">${state.linkedin}</span>`);
+        if (state.github) contacts.push(`<span class="contact-item">${state.github}</span>`);
+        if (state.website) contacts.push(`<span class="contact-item">${state.website}</span>`);
+        if (state.location) contacts.push(`<span class="contact-item">${state.location}</span>`);
+        
+        refs.contactInfo.innerHTML = contacts.join('<span class="contact-sep"> | </span>');
+        
+        // Summary
+        refs.previewSummary.textContent = state.summary || "Your professional summary will appear here.";
+        refs.summarySection.style.display = state.summary ? 'block' : 'none';
 
-        const validCollege = validateField(refs.college, { required: true, requiredMessage: "College name is required" });
-        const validDegree = validateField(refs.degree, { required: true, requiredMessage: "Degree is required" });
-
-        if (!validCollege || !validDegree) {
-            showToast("Please fill the required education fields", "warning");
-            return;
+        // Photo
+        if (state.photo) {
+            refs.profilePreview.src = state.photo;
+            refs.profilePreview.style.display = state.template === 'ats' ? 'none' : 'block';
+        } else {
+            refs.profilePreview.style.display = 'none';
         }
 
-        state.education.push(education);
-        refs.college.value = "";
-        refs.degree.value = "";
-        refs.year.value = "";
-        refs.percentage.value = "";
-        [refs.college, refs.degree, refs.year, refs.percentage].forEach(clearFieldError);
-        renderAll();
-        saveState(true);
-        showToast("Education added", "success");
+        renderSkills();
+        renderExperience();
+        renderEducation();
+        renderProjects();
+        renderLanguages();
+        renderCertifications();
+        renderHobbies();
+        applyTemplate(state.template);
     }
 
-    function addExperience() {
-        const experience = normalizeText(refs.experienceInput.value);
-        if (!experience) {
-            showFieldError(refs.experienceInput, "Enter experience details");
-            showToast("Please enter experience details", "warning");
-            return;
-        }
-
-        clearFieldError(refs.experienceInput);
-        state.experience.push(experience);
-        refs.experienceInput.value = "";
-        renderAll();
-        saveState(true);
-        showToast("Experience added", "success");
+    function createDeletableCard(title, subtitle, onDelete) {
+        const d = document.createElement('div');
+        d.className = 'item-card';
+        d.innerHTML = `<div class="item-card-content"><strong>${title}</strong>${subtitle ? `<span>${subtitle}</span>` : ''}</div><button class="delete-btn inline-delete" type="button">✕</button>`;
+        d.querySelector('.delete-btn').addEventListener('click', (e) => { e.stopPropagation(); showConfirmModal(`Delete "${title}"?`, onDelete); });
+        return d;
+    }
+    
+    function createTag(text, onDelete) {
+        const d = document.createElement('span');
+        d.className = 'tag';
+        d.innerHTML = `${text}<button class="delete-btn inline-delete" type="button">✕</button>`;
+        d.querySelector('.delete-btn').addEventListener('click', (e) => { e.stopPropagation(); showConfirmModal(`Delete "${text}"?`, onDelete); });
+        return d;
     }
 
-    function handlePhotoUpload() {
-        const file = refs.photoInput.files && refs.photoInput.files[0];
-        if (!file) return;
-
-        if (!file.type.startsWith("image/")) {
-            refs.photoInput.value = "";
-            showToast("Please upload an image file", "error");
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            state.photo = event.target.result;
-            renderPreview();
-            saveState(true);
-            showToast("Photo added to preview", "success");
-        };
-        reader.onerror = () => showToast("Unable to read the image", "error");
-        reader.readAsDataURL(file);
-    }
-
-    function applyTemplate(template) {
-        const selected = template || "modern";
-        const classesToRemove = Array.from(refs.resumePreview.classList).filter((className) => className.endsWith("-template"));
-
-        refs.resumePreview.classList.remove(...classesToRemove);
-        refs.resumePreview.classList.add(`${selected}-template`);
-        state.template = selected;
-
-        refs.templateButtons.forEach((button) => {
-            const isActive = button.textContent.trim().toLowerCase() === selected;
-            button.classList.toggle("active", isActive);
+    function renderSkills() {
+        refs.skillsList.innerHTML = ''; refs.previewSkills.innerHTML = '';
+        state.skills.forEach((s, i) => {
+            refs.skillsList.appendChild(createTag(s, () => { state.skills.splice(i,1); saveState(); renderPreview(); updateScore(); }));
+            const p = document.createElement('span'); p.className = 'skill-pill'; p.textContent = s;
+            refs.previewSkills.appendChild(p);
         });
+        refs.skillsSection.style.display = state.skills.length ? 'block' : 'none';
+    }
 
+    function renderExperience() {
+        refs.experienceList.innerHTML = ''; refs.previewExperience.innerHTML = '';
+        state.experience.forEach((e, i) => {
+            refs.experienceList.appendChild(createDeletableCard(e.title, e.company, () => { state.experience.splice(i,1); saveState(); renderPreview(); updateScore(); }));
+            const d = document.createElement('div'); d.className = 'exp-entry';
+            d.innerHTML = `
+                <div class="exp-header"><strong class="exp-title">${e.title}</strong><span class="exp-duration">${e.duration}</span></div>
+                <div class="exp-company">${e.company}${e.location ? ` · ${e.location}` : ''}</div>
+                ${e.description ? `<p class="exp-desc">${e.description}</p>` : ''}
+            `;
+            refs.previewExperience.appendChild(d);
+        });
+        refs.experienceSection.style.display = state.experience.length ? 'block' : 'none';
+    }
+
+    function renderEducation() {
+        refs.educationList.innerHTML = ''; refs.previewEducation.innerHTML = '';
+        state.education.forEach((e, i) => {
+            refs.educationList.appendChild(createDeletableCard(e.degree, e.college, () => { state.education.splice(i,1); saveState(); renderPreview(); updateScore(); }));
+            const d = document.createElement('div'); d.className = 'edu-entry';
+            d.innerHTML = `
+                <div class="edu-header"><strong>${e.degree}</strong><span class="edu-year">${e.year}</span></div>
+                <div class="edu-college">${e.college}</div>
+                ${e.percentage ? `<div class="edu-score">${e.percentage}</div>` : ''}
+            `;
+            refs.previewEducation.appendChild(d);
+        });
+        refs.educationSection.style.display = state.education.length ? 'block' : 'none';
+    }
+
+    function renderProjects() {
+        refs.projectList.innerHTML = ''; refs.previewProjects.innerHTML = '';
+        state.projects.forEach((p, i) => {
+            refs.projectList.appendChild(createDeletableCard(p.name, p.tech, () => { state.projects.splice(i,1); saveState(); renderPreview(); updateScore(); }));
+            const d = document.createElement('div'); d.className = 'project-entry';
+            d.innerHTML = `
+                <strong class="project-name">${p.name}</strong>
+                ${p.description ? `<p class="project-desc">${p.description}</p>` : ''}
+                ${p.tech ? `<span class="project-tech">${p.tech}</span>` : ''}
+            `;
+            refs.previewProjects.appendChild(d);
+        });
+        refs.projectsSection.style.display = state.projects.length ? 'block' : 'none';
+    }
+
+    function renderLanguages() {
+        refs.languageList.innerHTML = ''; refs.previewLanguages.innerHTML = '';
+        state.languages.forEach((l, i) => {
+            refs.languageList.appendChild(createDeletableCard(l.language, l.level, () => { state.languages.splice(i,1); saveState(); renderPreview(); updateScore(); }));
+            const d = document.createElement('div'); d.className = 'lang-entry';
+            d.innerHTML = `<span class="lang-name">${l.language}</span><span class="lang-level">${l.level}</span>`;
+            refs.previewLanguages.appendChild(d);
+        });
+        refs.languagesSection.style.display = state.languages.length ? 'block' : 'none';
+    }
+
+    function renderCertifications() {
+        refs.certList.innerHTML = ''; refs.previewCertifications.innerHTML = '';
+        state.certifications.forEach((c, i) => {
+            refs.certList.appendChild(createDeletableCard(c.name, c.issuer, () => { state.certifications.splice(i,1); saveState(); renderPreview(); updateScore(); }));
+            const d = document.createElement('div'); d.className = 'cert-entry';
+            d.innerHTML = `<strong>${c.name}</strong><span class="cert-meta">${c.issuer} ${c.year ? `· ${c.year}` : ''}</span>`;
+            refs.previewCertifications.appendChild(d);
+        });
+        refs.certificationsSection.style.display = state.certifications.length ? 'block' : 'none';
+    }
+
+    function renderHobbies() {
+        refs.hobbyList.innerHTML = ''; refs.previewHobbies.innerHTML = '';
+        state.hobbies.forEach((h, i) => {
+            refs.hobbyList.appendChild(createTag(h, () => { state.hobbies.splice(i,1); saveState(); renderPreview(); updateScore(); }));
+            const p = document.createElement('span'); p.className = 'skill-pill'; p.textContent = h;
+            refs.previewHobbies.appendChild(p);
+        });
+        refs.hobbiesSection.style.display = state.hobbies.length ? 'block' : 'none';
+    }
+
+    function applyTemplate(name) {
+        state.template = name;
+        const cl = Array.from(refs.resumePreview.classList).filter(c => c.endsWith('-template'));
+        refs.resumePreview.classList.remove(...cl);
+        refs.resumePreview.classList.add(`${name}-template`);
+        refs.templateBtns.forEach(b => {
+            b.classList.toggle('active', b.dataset.template === name);
+        });
+        saveState();
         if (refs.profilePreview) {
-            refs.profilePreview.style.display = state.photo && selected !== "ats" ? "block" : "none";
+            refs.profilePreview.style.display = state.photo && name !== 'ats' ? 'block' : 'none';
         }
     }
 
-    function handleTemplateClick(button) {
-        const template = button.textContent.trim().toLowerCase();
-        applyTemplate(template);
-        saveState(true);
+    // --- SCORE & ATS ---
+    function calculateScore() {
+        const c = [
+            state.name, validateEmail(state.email)?1:0, validatePhone(state.phone)?1:0, state.linkedin,
+            state.summary, state.skills.length, state.experience.length, state.education.length, state.projects.length
+        ];
+        return Math.round((c.filter(Boolean).length / c.length) * 100);
+    }
+
+    function updateScore() {
+        const score = calculateScore();
+        refs.resumeScore.textContent = `${score}%`;
+        const circ = 2 * Math.PI * 52; // 326.73
+        refs.scoreRingFill.style.strokeDashoffset = circ * (1 - score / 100);
     }
 
     function analyzeAts() {
-        const jd = normalizeText(refs.jobDescription.value).toLowerCase();
-        if (!jd) {
-            refs.atsResult.textContent = "";
-            showFieldError(refs.jobDescription, "Paste a job description first");
-            showToast("Paste a job description first", "warning");
-            return;
-        }
-
-        clearFieldError(refs.jobDescription);
-
-        const resumeWords = new Set(
-            refs.resumePreview.innerText
-                .toLowerCase()
-                .split(/[^a-z0-9+#.]+/)
-                .filter((word) => word.length > 2)
-        );
-
-        const keywords = Array.from(new Set(
-            jd.split(/[^a-z0-9+#.]+/).filter((word) => word.length > 3)
-        ));
-
-        if (!keywords.length) {
-            refs.atsResult.textContent = "Add more detail to the job description.";
-            return;
-        }
-
-        const matched = keywords.filter((word) => resumeWords.has(word)).length;
-        const score = Math.round((matched / keywords.length) * 100);
-        refs.atsResult.textContent = `ATS Match Score: ${score}%`;
+        const jd = (refs.jobDescription.value || '').toLowerCase();
+        if (!jd) { showToast("Paste a job description first", "warning"); return; }
+        const rWords = new Set(refs.resumePreview.innerText.toLowerCase().split(/[^a-z0-9+#.]+/).filter(w => w.length > 2));
+        const kWords = Array.from(new Set(jd.split(/[^a-z0-9+#.]+/).filter(w => w.length > 3)));
+        if (!kWords.length) { refs.atsResult.textContent = "Add more detail to the job description."; return; }
+        const matched = kWords.filter(w => rWords.has(w)).length;
+        const score = Math.round((matched / kWords.length) * 100);
+        refs.atsResult.innerHTML = `<strong>ATS Match: ${score}%</strong><br>Found ${matched} out of ${kWords.length} keywords.`;
     }
 
-    function setLoading(isLoading) {
-        refs.loadingSpinner.classList.toggle("hidden", !isLoading);
-        refs.downloadBtn.disabled = isLoading;
+    // --- ACTIONS ---
+    function handlePhotoUpload(file) {
+        if (!file || !file.type.startsWith('image/')) { showToast("Please upload a valid image", "error"); return; }
+        const reader = new FileReader();
+        reader.onload = e => {
+            state.photo = e.target.result;
+            syncInputsFromState();
+            renderPreview();
+            saveState();
+            showToast("Photo updated", "success");
+        };
+        reader.readAsDataURL(file);
     }
 
-    function waitForImages(root) {
-        const images = Array.from(root.querySelectorAll("img")).filter((image) => image.src && !image.complete);
-        return Promise.all(images.map((image) => new Promise((resolve) => {
-            image.onload = resolve;
-            image.onerror = resolve;
-        })));
+    function removePhoto() {
+        state.photo = '';
+        syncInputsFromState();
+        renderPreview();
+        saveState();
+        showToast("Photo removed", "info");
     }
 
     async function downloadPdf() {
-        updateStateFromPersonalInputs();
-        renderPreview();
-
         if (!validateForm(true)) return;
-
-        if (typeof html2pdf === "undefined") {
-            showToast("PDF library is still loading. Try again in a moment.", "error");
-            return;
-        }
-
-        setLoading(true);
-        await waitForImages(refs.resumePreview);
-
-        const previousStyle = refs.resumePreview.getAttribute("style") || "";
-        refs.resumePreview.classList.add("exporting");
-        refs.resumePreview.style.width = "210mm";
-        refs.resumePreview.style.minHeight = "297mm";
-        refs.resumePreview.style.margin = "0";
-        refs.resumePreview.style.border = "none";
-        refs.resumePreview.style.borderRadius = "0";
-        refs.resumePreview.style.boxShadow = "none";
-        refs.resumePreview.style.padding = state.template === "ats" ? "14mm" : "18mm";
-
+        if (typeof html2pdf === "undefined") { showToast("PDF library loading...", "error"); return; }
+        
+        refs.loadingSpinner.classList.remove('hidden');
+        
+        // Wait for images
+        const imgs = Array.from(refs.resumePreview.querySelectorAll('img')).filter(i => i.src && !i.complete);
+        await Promise.all(imgs.map(i => new Promise(res => { i.onload = res; i.onerror = res; })));
+        
+        const prevStyle = refs.resumePreview.getAttribute('style') || '';
+        refs.resumePreview.classList.add('exporting');
+        refs.resumePreview.style.width = '210mm';
+        refs.resumePreview.style.minHeight = '297mm';
+        refs.resumePreview.style.margin = '0';
+        refs.resumePreview.style.border = 'none';
+        refs.resumePreview.style.borderRadius = '0';
+        refs.resumePreview.style.boxShadow = 'none';
+        refs.resumePreview.style.padding = state.template === 'ats' ? '14mm' : '18mm';
+        
         try {
-            await html2pdf()
-                .set({
-                    margin: 0,
-                    filename: `ResumeForge-${state.template}-resume.pdf`,
-                    image: { type: "jpeg", quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, logging: false },
-                    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-                    pagebreak: { mode: ["avoid-all", "css", "legacy"] }
-                })
-                .from(refs.resumePreview)
-                .save();
+            await html2pdf().set({
+                margin: 0,
+                filename: `ResumeForge-${state.name.replace(/\s+/g,'_') || 'resume'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            }).from(refs.resumePreview).save();
             showToast("PDF downloaded successfully", "success");
-        } catch (error) {
-            console.error("PDF export error:", error);
-            showToast("Error generating PDF. Please try again.", "error");
+        } catch (e) {
+            console.error(e);
+            showToast("Error generating PDF", "error");
         } finally {
-            refs.resumePreview.setAttribute("style", previousStyle);
-            refs.resumePreview.classList.remove("exporting");
-            setLoading(false);
+            refs.resumePreview.setAttribute('style', prevStyle);
+            refs.resumePreview.classList.remove('exporting');
+            refs.loadingSpinner.classList.add('hidden');
         }
     }
 
-    function bindPersonalField(field, key, rules) {
-        field.addEventListener("input", () => {
-            state[key] = field.value.trim();
+    function exportJSON() {
+        const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `ResumeForge_Export_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("Resume data exported", "success");
+    }
+
+    function importJSON(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                Object.assign(state, data);
+                syncInputsFromState();
+                renderPreview();
+                updateScore();
+                saveState();
+                showToast("Resume data imported", "success");
+            } catch(err) { showToast("Invalid JSON file", "error"); }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+    }
+
+    function resetAll() {
+        showConfirmModal("Are you sure you want to reset all data? This cannot be undone.", () => {
+            localStorage.removeItem(STORAGE_KEY);
+            Object.keys(state).forEach(k => { state[k] = Array.isArray(state[k]) ? [] : ''; });
+            state.template = 'modern';
+            syncInputsFromState();
             renderPreview();
             updateScore();
-            if (rules) validateField(field, rules);
-            saveState(false);
-        });
-
-        if (rules) {
-            field.addEventListener("blur", () => validateField(field, rules));
-        }
-    }
-
-    function bindEnterToAdd(input, handler) {
-        input.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                handler();
-            }
+            showToast("All data reset", "info");
         });
     }
 
+    // --- BIND EVENTS ---
     function bindEvents() {
-        bindPersonalField(refs.name, "name", { required: true, requiredMessage: "Name is required" });
-        bindPersonalField(refs.email, "email", { required: true, email: true, requiredMessage: "Email is required" });
-        bindPersonalField(refs.phone, "phone", { phone: true });
-        bindPersonalField(refs.linkedin, "linkedin");
-        bindPersonalField(refs.github, "github");
-        bindPersonalField(refs.summary, "summary");
-
-        refs.addSkill.addEventListener("click", addSkill);
-        refs.addProject.addEventListener("click", addProject);
-        refs.addEducation.addEventListener("click", addEducation);
-        refs.addExperience.addEventListener("click", addExperience);
-        refs.photoInput.addEventListener("change", handlePhotoUpload);
-        refs.checkATS.addEventListener("click", analyzeAts);
-        refs.downloadBtn.addEventListener("click", downloadPdf);
-
-        refs.templateButtons.forEach((button) => {
-            button.addEventListener("click", () => handleTemplateClick(button));
+        // Inputs
+        ['name','email','phone','linkedin','github','website','location'].forEach(id => {
+            refs[id].addEventListener('input', updateStateFromInputs);
+        });
+        
+        refs.summary.addEventListener('input', () => {
+            if (refs.summary.value.length > 500) refs.summary.value = refs.summary.value.substring(0, 500);
+            updateStateFromInputs();
         });
 
-        refs.confirmCancel.addEventListener("click", hideConfirmModal);
-        refs.confirmDelete.addEventListener("click", () => {
-            if (pendingDelete) pendingDelete();
-            hideConfirmModal();
+        // Add Handlers
+        refs.addSkill.addEventListener('click', () => {
+            const v = refs.skillInput.value.trim();
+            if(!v) return;
+            if(state.skills.includes(v)){ showToast("Skill already added","warning"); return; }
+            state.skills.push(v); refs.skillInput.value = ''; saveState(); renderPreview(); updateScore();
+        });
+        
+        refs.addExperience.addEventListener('click', () => {
+            const t = refs.expTitle.value.trim(), c = refs.expCompany.value.trim();
+            if(!t || !c) { showToast("Title and Company required","warning"); return; }
+            state.experience.push({ title: t, company: c, duration: refs.expDuration.value.trim(), location: refs.expLocation.value.trim(), description: refs.expDescription.value.trim() });
+            refs.expTitle.value=''; refs.expCompany.value=''; refs.expDuration.value=''; refs.expLocation.value=''; refs.expDescription.value='';
+            saveState(); renderPreview(); updateScore(); showToast("Experience added", "success");
         });
 
-        bindEnterToAdd(refs.skillInput, addSkill);
-        bindEnterToAdd(refs.projectInput, addProject);
-        bindEnterToAdd(refs.experienceInput, addExperience);
-        [refs.college, refs.degree, refs.year, refs.percentage].forEach((input) => bindEnterToAdd(input, addEducation));
+        refs.addEducation.addEventListener('click', () => {
+            const c = refs.collegeInput.value.trim(), d = refs.degreeInput.value.trim();
+            if(!c || !d) { showToast("College and Degree required","warning"); return; }
+            state.education.push({ college: c, degree: d, year: refs.yearInput.value.trim(), percentage: refs.percentageInput.value.trim() });
+            refs.collegeInput.value=''; refs.degreeInput.value=''; refs.yearInput.value=''; refs.percentageInput.value='';
+            saveState(); renderPreview(); updateScore(); showToast("Education added", "success");
+        });
+
+        refs.addProject.addEventListener('click', () => {
+            const n = refs.projectInput.value.trim();
+            if(!n) { showToast("Project name required","warning"); return; }
+            state.projects.push({ name: n, description: refs.projectDesc.value.trim(), tech: refs.projectTech.value.trim() });
+            refs.projectInput.value=''; refs.projectDesc.value=''; refs.projectTech.value='';
+            saveState(); renderPreview(); updateScore(); showToast("Project added", "success");
+        });
+
+        refs.addLanguage.addEventListener('click', () => {
+            const l = refs.languageInput.value.trim();
+            if(!l) return;
+            state.languages.push({ language: l, level: refs.languageLevel.value });
+            refs.languageInput.value='';
+            saveState(); renderPreview(); updateScore();
+        });
+
+        refs.addCert.addEventListener('click', () => {
+            const n = refs.certInput.value.trim();
+            if(!n) return;
+            state.certifications.push({ name: n, issuer: refs.certIssuer.value.trim(), year: refs.certYear.value.trim() });
+            refs.certInput.value=''; refs.certIssuer.value=''; refs.certYear.value='';
+            saveState(); renderPreview(); updateScore();
+        });
+
+        refs.addHobby.addEventListener('click', () => {
+            const h = refs.hobbyInput.value.trim();
+            if(!h) return;
+            if(state.hobbies.includes(h)) return;
+            state.hobbies.push(h); refs.hobbyInput.value='';
+            saveState(); renderPreview(); updateScore();
+        });
+
+        // Photo Upload
+        refs.photoInput.addEventListener('change', e => handlePhotoUpload(e.target.files[0]));
+        refs.photoUploadArea.addEventListener('click', () => { if(!state.photo) refs.photoInput.click(); });
+        refs.removePhotoBtn.addEventListener('click', e => { e.stopPropagation(); removePhoto(); });
+        
+        // Drag and drop photo
+        refs.photoUploadArea.addEventListener('dragover', e => { e.preventDefault(); refs.photoUploadArea.style.borderColor = 'var(--primary)'; });
+        refs.photoUploadArea.addEventListener('dragleave', e => { e.preventDefault(); refs.photoUploadArea.style.borderColor = 'var(--border)'; });
+        refs.photoUploadArea.addEventListener('drop', e => {
+            e.preventDefault(); refs.photoUploadArea.style.borderColor = 'var(--border)';
+            if(e.dataTransfer.files && e.dataTransfer.files[0]) handlePhotoUpload(e.dataTransfer.files[0]);
+        });
+
+        // Templates
+        refs.templateBtns.forEach(btn => btn.addEventListener('click', () => applyTemplate(btn.dataset.template)));
+
+        // Modals & Actions
+        refs.confirmCancel.addEventListener('click', hideConfirmModal);
+        refs.confirmDelete.addEventListener('click', () => { if(pendingConfirmAction) pendingConfirmAction(); hideConfirmModal(); });
+        refs.downloadBtn.addEventListener('click', downloadPdf);
+        refs.mobileDownloadBtn.addEventListener('click', downloadPdf);
+        refs.checkATS.addEventListener('click', analyzeAts);
+        
+        refs.exportBtn.addEventListener('click', exportJSON);
+        refs.importBtn.addEventListener('click', () => refs.importFileInput.click());
+        refs.importFileInput.addEventListener('change', importJSON);
+        refs.resetBtn.addEventListener('click', resetAll);
+
+        // Section Accordions
+        refs.sectionHeaders.forEach(h => {
+            h.addEventListener('click', () => {
+                const box = h.parentElement;
+                box.classList.toggle('collapsed');
+                const icon = h.querySelector('.toggle-icon');
+                if(icon) icon.style.transform = box.classList.contains('collapsed') ? 'rotate(-90deg)' : 'rotate(0)';
+            });
+        });
+
+        // Mobile Tabs
+        refs.tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                refs.tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                if(btn.dataset.tab === 'edit') {
+                    refs.sidebarPanel.style.display = 'flex';
+                    refs.previewPanel.style.display = 'none';
+                } else {
+                    refs.sidebarPanel.style.display = 'none';
+                    refs.previewPanel.style.display = 'flex';
+                }
+            });
+        });
+
+        // Mobile Menu
+        refs.mobileMenuToggle.addEventListener('click', () => {
+            refs.topActions.classList.toggle('open');
+        });
+        
+        // Enter key handling for inputs
+        const bindEnter = (input, btn) => { input.addEventListener('keypress', e => { if(e.key === 'Enter'){ e.preventDefault(); btn.click(); }}); };
+        bindEnter(refs.skillInput, refs.addSkill);
+        bindEnter(refs.hobbyInput, refs.addHobby);
     }
 
     function initFromQueryString() {
-        const search = window.location && window.location.search ? window.location.search : "";
-        const template = new URLSearchParams(search).get("template");
-        if (template) {
-            state.template = template.trim().toLowerCase();
-        }
+        const urlParams = new URLSearchParams(window.location.search);
+        const t = urlParams.get('template');
+        if (t) state.template = t;
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    // --- INIT ---
+    document.addEventListener('DOMContentLoaded', () => {
         loadState();
         initFromQueryString();
         syncInputsFromState();
         bindEvents();
-        renderAll();
-        console.log("ResumeForge Builder Loaded");
+        
+        // Mobile initial state (handled by CSS media queries, but ensure correct display)
+        if(window.innerWidth <= 768) {
+            refs.previewPanel.style.display = 'none';
+        }
+        
+        renderPreview();
+        updateScore();
+        
+        // Make sure all sections are initially expanded (no collapsed class)
+        refs.sectionHeaders.forEach(h => {
+            const icon = h.querySelector('.toggle-icon');
+            if(icon) icon.style.transform = 'rotate(0)';
+        });
     });
+
 })();

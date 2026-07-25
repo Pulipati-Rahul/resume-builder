@@ -22,7 +22,7 @@
 	}
 
 	function attachRipples(){
-		const selectors = ['.btn', '.nav-btn', '.download-btn', '.template-btn', '.section-box button', 'button'];
+		const selectors = ['.btn', '.nav-btn', '.download-btn', '.template-btn', '.section-box button', 'button', '.action-btn', '.tab-btn'];
 		const els = document.querySelectorAll(selectors.join(','));
 		els.forEach(el => {
 			// don't attach twice
@@ -51,11 +51,18 @@
 /* Additional micro interactions: tooltips, back-to-top, smooth scroll */
 (function(){
 	function showTooltip(e){
-		const text = e.currentTarget.dataset.tooltip;
+		const text = e.currentTarget.dataset.tooltip || e.currentTarget.title;
 		if(!text) return;
+        
+        // Remove native tooltip
+        if (e.currentTarget.title) {
+            e.currentTarget.dataset.title = e.currentTarget.title;
+            e.currentTarget.removeAttribute('title');
+        }
+
 		const tip = document.createElement('div');
 		tip.className = 'micro-tooltip';
-		tip.textContent = text;
+		tip.textContent = e.currentTarget.dataset.title || text;
 		document.body.appendChild(tip);
 		const rect = e.currentTarget.getBoundingClientRect();
 		tip.style.left = `${rect.left + rect.width/2 - tip.offsetWidth/2}px`;
@@ -69,7 +76,7 @@
 	}
 
 	function attachTooltips(){
-		const els = document.querySelectorAll('[data-tooltip]');
+		const els = document.querySelectorAll('[data-tooltip], [title]');
 		els.forEach(el=>{
 			el.addEventListener('mouseenter', showTooltip);
 			el.addEventListener('mouseleave', hideTooltip);
@@ -104,4 +111,3 @@
 	});
 
 })();
-
