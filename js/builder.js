@@ -79,7 +79,6 @@
         
         // Mobile & layout
         mobileMenuToggle: $('mobileMenuToggle'), topActions: $('topActions'),
-        tabBtns: document.querySelectorAll('.tab-btn'),
         sidebarPanel: $('sidebarPanel'), previewPanel: $('previewPanel'),
         sectionHeaders: document.querySelectorAll('.section-header')
     };
@@ -588,21 +587,6 @@
             });
         });
 
-        // Mobile Tabs
-        refs.tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                refs.tabBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                if(btn.dataset.tab === 'edit') {
-                    refs.sidebarPanel.style.display = 'flex';
-                    refs.previewPanel.style.display = 'none';
-                } else {
-                    refs.sidebarPanel.style.display = 'none';
-                    refs.previewPanel.style.display = 'flex';
-                }
-            });
-        });
-
         // Mobile Menu
         refs.mobileMenuToggle.addEventListener('click', () => {
             refs.topActions.classList.toggle('open');
@@ -626,11 +610,6 @@
         initFromQueryString();
         syncInputsFromState();
         bindEvents();
-        
-        // Mobile initial state (handled by CSS media queries, but ensure correct display)
-        if(window.innerWidth <= 768) {
-            refs.previewPanel.style.display = 'none';
-        }
         
         renderPreview();
         updateScore();

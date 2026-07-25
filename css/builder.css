@@ -157,36 +157,6 @@ body { background:#f5f8ff; color:#0f172a; min-height:100vh; overflow-x:hidden; }
 }
 
 /* ==========================================================================
-   4. MOBILE TABS
-   ========================================================================== */
-.mobile-tabs {
-    display: none;
-    position: fixed;
-    top: 60px;
-    left: 0;
-    width: 100%;
-    z-index: 99;
-    background: white;
-    border-bottom: 1px solid rgba(15,23,42,0.05);
-}
-.tab-btn {
-    flex: 1;
-    padding: 12px;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--muted);
-    cursor: pointer;
-    transition: var(--transition-fast);
-}
-.tab-btn.active {
-    color: var(--primary);
-    border-bottom-color: var(--primary);
-}
-
-/* ==========================================================================
    5. BUILDER LAYOUT
    ========================================================================== */
 .builder-container {
@@ -1359,7 +1329,7 @@ input.error, textarea.error {
    ========================================================================== */
 @media print {
     body { background: white; }
-    .topbar, .mobile-tabs, .sidebar, .mobile-bottom-bar, .score-box, .ats-checker, .toast-container, .modal, .loading-spinner, .back-to-top { display: none !important; }
+    .topbar, .sidebar, .mobile-bottom-bar, .score-box, .ats-checker, .toast-container, .modal, .loading-spinner, .back-to-top { display: none !important; }
     .builder-container { display: block; height: auto; margin: 0; padding: 0; }
     .preview { padding: 0; overflow: visible; }
     .resume-preview {
@@ -1395,21 +1365,19 @@ input.error, textarea.error {
         max-width: none;
         justify-content: center;
     }
-    .mobile-tabs { display: flex; }
     .builder-container {
         display: block;
         height: auto;
         overflow: visible;
-        margin-top: 120px;
+        margin-top: 80px;
         padding: 12px;
         margin-bottom: 70px;
     }
     .sidebar, .preview {
+        display: block;
         overflow: visible;
         padding: 0;
     }
-    .sidebar.hidden-mobile { display: none; }
-    .preview.hidden-mobile { display: none; }
     .mobile-bottom-bar { display: flex; }
     .resume-preview {
         width: 100% !important;
@@ -1423,7 +1391,7 @@ input.error, textarea.error {
 }
 
 @media (max-width: 480px) {
-    .builder-container { padding: 8px; margin-top: 140px; }
+    .builder-container { padding: 8px; margin-top: 80px; }
     .section-box { padding: 10px; }
     .resume-preview { padding: 16px; }
     .resume-preview h1 { font-size: 22px !important; }
