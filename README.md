@@ -1,64 +1,233 @@
-# ResumeForge
+# 📄 ResumeForge
 
-ResumeForge is a simple resume builder website that I made using HTML, CSS, and JavaScript. It helps users create a resume quickly, try different templates, see a live preview, and download the final resume as a PDF.
+A modern resume builder web application that allows users to create professional resumes with live preview, multiple templates, ATS-friendly scoring, and one-click PDF export.
 
-## What It Does
+🔗 **Live Demo:** https://resume-forge19.vercel.app
 
-- Live resume preview while filling the form
-- Personal details, summary, skills, projects, education, and experience sections
-- 40 resume template styles
-- ATS-friendly template option
-- Resume score based on completed sections
-- Job description based ATS keyword checker
-- Profile photo upload
-- Auto-save in the browser using localStorage
-- Form validation for important fields
-- PDF download using html2pdf.js
+---
 
-## Tech Stack
+## 📖 About the Project
 
-- HTML
-- CSS
-- JavaScript
-- localStorage
+ResumeForge was built to help students and job seekers create professional resumes quickly without needing complex software.
+
+Users can enter their personal information, education, projects, skills, and work experience while seeing a live preview of their resume. The application includes multiple resume templates, ATS-friendly analysis, resume scoring, local auto-save, and PDF export functionality.
+
+This project helped me strengthen my frontend development skills, DOM manipulation, form validation, browser storage, PDF generation, and responsive UI design.
+
+---
+
+# ✨ Features
+
+### 📄 Resume Builder
+
+- Live resume preview
+- Multiple resume sections
+- Dynamic form updates
+- Professional layouts
+- Easy editing
+
+### 🎨 Resume Templates
+
+- 40 resume templates
+- Modern UI
+- ATS-friendly template
+- Template switching
+- Professional formatting
+
+### 🤖 ATS Features
+
+- Resume score
+- ATS-friendly analysis
+- Keyword checker
+- Job description matching
+- Resume improvement suggestions
+
+### 💾 Productivity
+
+- Auto-save using LocalStorage
+- Import JSON resume
+- Export JSON resume
+- One-click PDF download
+
+### 📱 User Experience
+
+- Responsive design
+- Mobile friendly
+- Smooth animations
+- Form validation
+- Loading indicators
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
+
+- HTML5
+- CSS3
+- JavaScript (ES6)
+
+## Libraries
+
 - html2pdf.js
 
-## How To Run
+## Browser APIs
 
-You do not need any backend or database for this project.
+- LocalStorage
+- File API
 
-1. Download or clone this repository.
-2. Open `index.html` in your browser.
-3. Click any template or click **Start Building**.
-4. Fill the resume details and download the PDF.
+---
 
-## Project Structure
+# 📸 Screenshots
 
+## 🏠 Home & Features
 
-Resume Builder/
-|-- index.html
-|-- builder.html
-|-- css/
-|   |-- style.css
-|   |-- builder.css
-|-- js/
-|   |-- main.js
-|   |-- builder.js
- -- assets/
+<p align="center">
+  <img src="screenshots/01-home.png" width="48%">
+  <img src="screenshots/02-features.png" width="48%">
+</p>
 
+## 📄 Template Selection & Live Preview
 
-## Why I Built This
+<p align="center">
+  <img src="screenshots/03-template-selection.png" width="48%">
+  <img src="screenshots/04-live-preview.png" width="48%">
+</p>
 
-I wanted to build a practical frontend project that feels useful, not just a normal landing page. This project helped me practice DOM manipulation, form validation, localStorage, template switching, and PDF generation.
+## 🤖 ATS Analysis & PDF Export
 
-## Future Improvements
+<p align="center">
+  <img src="screenshots/05-ats-analysis.png" width="48%">
+  <img src="screenshots/06-pdf-export.png" width="48%">
+</p>
 
-- Add drag and drop section ordering
-- Add more detailed experience and project fields
-- Add export options for different page sizes
-- Improve mobile editing experience
-- Add better template previews on the home page
+## 📱 Footer & Mobile View
 
-## Status
+<p align="center">
+  <img src="screenshots/07-footer.png" width="48%">
+  <img src="screenshots/08-mobile.png" width="48%">
+</p>
 
-This project is still improving, but the main resume builder flow is working.
+---
+
+# 📂 Project Structure
+
+```text
+ResumeForge
+│
+├── index.html
+├── builder.html
+│
+├── css
+│   ├── style.css
+│   └── builder.css
+│
+├── js
+│   ├── main.js
+│   └── builder.js
+│
+├── assets
+│
+└── screenshots
+```
+
+---
+
+# ⚙️ Installation
+
+## Clone the repository
+
+```bash
+git clone https://github.com/Pulipati-Rahul/resume-forge.git
+```
+
+## Navigate into the project
+
+```bash
+cd resume-forge
+```
+
+## Open the project
+
+Simply open:
+
+```text
+index.html
+```
+
+in your browser.
+
+No backend or database is required.
+
+---
+
+# ▶️ Running the Project
+
+You can run the project using:
+
+- VS Code Live Server
+
+or
+
+- Open `index.html` directly in your browser.
+
+---
+
+# 🌍 Live Deployment
+
+Frontend
+
+https://resume-forge19.vercel.app
+
+---
+
+# 💡 What I Learned
+
+While building this project, I learned:
+
+- Advanced DOM Manipulation
+- Dynamic Form Handling
+- LocalStorage Integration
+- PDF Generation using html2pdf.js
+- Resume Template Switching
+- Responsive UI Design
+- ATS Resume Optimization
+- JavaScript Event Handling
+- Client-side Data Management
+- Git & GitHub Workflow
+
+---
+
+# 🚀 Future Improvements
+
+- AI-powered resume suggestions
+- AI-generated professional summaries
+- Drag & Drop section ordering
+- Cloud backup
+- User authentication
+- Resume sharing via link
+- More professional templates
+- Multi-language support
+- Resume analytics
+
+---
+
+# 👨‍💻 Author
+
+**Pulipati Rahul**
+
+Full Stack Developer
+
+GitHub:
+https://github.com/Pulipati-Rahul
+
+LinkedIn:
+https://www.linkedin.com/in/pulipati-rahul-92a27940b/
+
+---
+
+# ⭐ Support
+
+If you found this project helpful, consider giving it a ⭐ on GitHub.
+
+It motivates me to continue building high-quality projects.
