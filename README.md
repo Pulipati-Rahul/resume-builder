@@ -94,17 +94,19 @@ This project helped me strengthen my frontend development skills, DOM manipulati
   <img src="screenshots/04-live-preview.png" width="48%">
 </p>
 
-## 🤖 ATS Analysis & PDF Export
+## 🤖 ATS Analysis & Footer
 
 <p align="center">
   <img src="screenshots/05-ats-analysis.png" width="48%">
-  <img src="screenshots/06-pdf-export.png" width="48%">
+  <img src="screenshots/07-footer.png" width="48%">
+  
 </p>
 
-## 📱 Footer & Mobile View
+## 📱PDF Export & Mobile View
 
 <p align="center">
-  <img src="screenshots/07-footer.png" width="48%">
+  
+  <img src="screenshots/06-pdf-export.png" width="48%">
   <img src="screenshots/08-mobile.png" width="48%">
 </p>
 
