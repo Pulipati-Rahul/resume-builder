@@ -224,7 +224,7 @@ GitHub:
 https://github.com/Pulipati-Rahul
 
 LinkedIn:
-https://www.linkedin.com/in/pulipati-rahul-92a27940b
+https://www.linkedin.com/in/pulipatirahul
 
 Portfolio:
 https://pulipatirahul.vercel.app
