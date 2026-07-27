@@ -77,38 +77,37 @@ This project helped me strengthen my frontend development skills, DOM manipulati
 - File API
 
 ---
-
 # 📸 Screenshots
 
-## 🏠 Home & Features
+### 🏠 Home & Features
 
-<p align="center">
-  <img src="screenshots/01-home.png" width="48%">
-  <img src="screenshots/02-features.png" width="48%">
-</p>
+| Home | Features |
+|------|----------|
+| ![](screenshots/01-home.png) | ![](screenshots/02-features.png) |
 
-## 📄 Template Selection & Live Preview
+---
 
-<p align="center">
-  <img src="screenshots/03-template-selection.png" width="48%">
-  <img src="screenshots/04-live-preview.png" width="48%">
-</p>
+### 📄 Template Selection & Live Preview
 
-## 🤖 ATS Analysis & Footer
+| Template Selection | Live Preview |
+|--------------------|--------------|
+| ![](screenshots/03-template-selection.png) | ![](screenshots/04-live-preview.png) |
 
-<p align="center">
-  <img src="screenshots/05-ats-analysis.png" width="48%">
-  <img src="screenshots/07-footer.png" width="48%">
-  
-</p>
+---
 
-## 📱PDF Export & Mobile View
+### 🤖 ATS Analysis & Footer
 
-<p align="center">
-  
-  <img src="screenshots/06-pdf-export.png" width="48%">
-  <img src="screenshots/08-mobile.png" width="48%">
-</p>
+| ATS Analysis | Footer |
+|--------------|--------|
+| ![](screenshots/05-ats-analysis.png) | ![](screenshots/07-footer.png) |
+
+---
+
+### 📄 PDF Export & 📱 Mobile View
+
+| PDF Export | Mobile View |
+|------------|-------------|
+| ![](screenshots/06-pdf-export.png) | ![](screenshots/08-mobile.png) |
 
 ---
 
